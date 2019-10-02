@@ -89,6 +89,8 @@ function get_upload_status {
 
     local upload_status=$(aws devicefarm get-upload --arn="$upload_arn" --query='upload.status' --output=text)
     echo "$upload_status"
+    local upload_metadata=$(aws devicefarm get-upload --arn="$upload_arn" --query='upload.metadata' --output=text)
+    echo "$upload_metadata"
 }
 
 #=======================================
