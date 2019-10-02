@@ -89,6 +89,12 @@ function get_upload_status {
 
     local upload_status=$(aws devicefarm get-upload --arn="$upload_arn" --query='upload.status' --output=text)
     echo "$upload_status"
+}
+
+function get_upload_metadata {
+    local upload_arn="$1"
+    validate_required_variable "upload_arn" $upload_arn
+
     local upload_metadata=$(aws devicefarm get-upload --arn="$upload_arn" --query='upload.metadata' --output=text)
     echo "$upload_metadata"
 }
@@ -155,7 +161,9 @@ upload_status=$(get_upload_status "$upload_arn")
 echo_details "Upload status: $upload_status"
 while [ ! "$upload_status" == 'SUCCEEDED' ]; do
     if [ "$upload_status" == 'FAILED' ]; then
-        echo_fail 'Upload failed!'
+	upload_metadata=$(get_upload_metadata "$upload_arn")
+	echo_details "Upload metadata: $upload_metadata"
+	echo_fail 'Upload failed!'
     fi
 
     echo_details "Upload not yet processed; waiting. (Status=$upload_status)"
